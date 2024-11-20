@@ -1,4 +1,4 @@
-import { Field, Float, Int, ObjectType } from "type-graphql";
+import { Field, Float, Int, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
@@ -7,14 +7,14 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Unique,
-} from "typeorm";
-import { categories } from "../../enums/book.enum";
-import { Author } from "../author/author.entity";
-import { Buyer } from "../buyer/buyer.entity";
+} from 'typeorm';
+import { categories } from '../../enums/book.enum';
+import { Author } from '../author/author.entity';
+import { Buyer } from '../buyer/buyer.entity';
 
 @ObjectType()
 @Entity()
-@Unique(["title"])
+@Unique(['title'])
 export class Book {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -30,7 +30,7 @@ export class Book {
 
   @Field(() => categories)
   @Column({
-    type: "simple-enum",
+    type: 'simple-enum',
     enum: categories,
     default: categories.UNKNOWN,
   })
@@ -41,11 +41,11 @@ export class Book {
   stock!: number;
 
   @Field(() => Float)
-  @Column({ type: "float" })
+  @Column({ type: 'float' })
   price!: number;
 
   @Field()
-  @Column("text")
+  @Column('text')
   introduction!: string;
 
   @Field(() => Author)

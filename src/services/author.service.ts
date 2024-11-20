@@ -1,7 +1,6 @@
-// src/services/AuthorService.ts
-import { AppDataSource } from "../config/data-source";
-import { Author } from "../entities/author/author.entity";
-import { categories } from "../enums/book.enum";
+import { AppDataSource } from '../config/data-source';
+import { Author } from '../entities/author/author.entity';
+import { categories } from '../enums/book.enum';
 
 export class AuthorService {
   private authorRepository = AppDataSource.getRepository(Author);
@@ -12,7 +11,7 @@ export class AuthorService {
    * @returns {Promise<Author[]>} An array of authors.
    */
   async findAll(): Promise<Author[]> {
-    return this.authorRepository.find({ relations: ["books"] });
+    return this.authorRepository.find({ relations: ['books'] });
   }
 
   /**
@@ -24,7 +23,7 @@ export class AuthorService {
   async findById(id: number): Promise<Author | null> {
     return this.authorRepository.findOne({
       where: { id },
-      relations: ["books"],
+      relations: ['books'],
     });
   }
 
@@ -39,7 +38,7 @@ export class AuthorService {
   async create(
     name: string,
     birth: string,
-    categories: categories[]
+    categories: categories[],
   ): Promise<Author> {
     const newAuthor = this.authorRepository.create({
       name,
@@ -62,11 +61,11 @@ export class AuthorService {
     id: number,
     name?: string,
     birth?: string,
-    categories?: categories[]
+    categories?: categories[],
   ): Promise<Author | null> {
     const Author = await this.authorRepository.findOne({ where: { id } });
     if (!Author) {
-      throw new Error("Author not found");
+      throw new Error('Author not found');
     }
 
     if (name) Author.name = name;

@@ -1,6 +1,10 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { Buyer } from "../entities/buyer/buyer.entity";
-import { BuyerService } from "../services/buyer.service";
+import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
+import { Buyer } from '../entities/buyer/buyer.entity';
+import { BuyerService } from '../services/buyer.service';
+
+export interface Context {
+  userId?: number;
+}
 
 @Resolver(() => Buyer)
 export class BuyerResolver {
@@ -23,7 +27,7 @@ export class BuyerResolver {
    * @returns {Promise<Buyer | null>} The buyer object if found, or null if not.
    */
   @Query(() => Buyer, { nullable: true })
-  async getBuyerById(@Arg("id") id: number): Promise<Buyer | null> {
+  async getBuyerById(@Arg('id') id: number): Promise<Buyer | null> {
     return this.buyerService.findById(id);
   }
 
@@ -41,15 +45,16 @@ export class BuyerResolver {
    */
   @Mutation(() => Buyer)
   async createBuyer(
-    @Arg("firstName") firstName: string,
-    @Arg("lastName") lastName: string,
-    @Arg("emailAddress") emailAddress: string,
-    @Arg("address") address: string,
-    @Arg("birth") birth: string,
-    @Arg("wallet") wallet: number,
-    @Arg("phoneNumber") phoneNumber?: string
+    @Arg('firstName') firstName: string,
+    @Arg('lastName') lastName: string,
+    @Arg('emailAddress') emailAddress: string,
+    @Arg('address') address: string,
+    @Arg('birth') birth: string,
+    @Arg('wallet') wallet: number,
+    @Arg('password') password: string,
+    @Arg('phoneNumber') phoneNumber?: string,
   ): Promise<Buyer> {
-    console.log("aqui");
+    console.log('aqui');
     return this.buyerService.create(
       firstName,
       lastName,
@@ -57,7 +62,8 @@ export class BuyerResolver {
       address,
       birth,
       wallet,
-      phoneNumber
+      password,
+      phoneNumber,
     );
   }
 
@@ -76,14 +82,14 @@ export class BuyerResolver {
    */
   @Mutation(() => Buyer, { nullable: true })
   async updateBuyer(
-    @Arg("id") id: number,
-    @Arg("firstName", { nullable: true }) firstName?: string,
-    @Arg("lastName", { nullable: true }) lastName?: string,
-    @Arg("emailAddress", { nullable: true }) emailAddress?: string,
-    @Arg("address", { nullable: true }) address?: string,
-    @Arg("birth", { nullable: true }) birth?: string,
-    @Arg("wallet", { nullable: true }) wallet?: number,
-    @Arg("phoneNumber", { nullable: true }) phoneNumber?: string
+    @Arg('id') id: number,
+    @Arg('firstName', { nullable: true }) firstName?: string,
+    @Arg('lastName', { nullable: true }) lastName?: string,
+    @Arg('emailAddress', { nullable: true }) emailAddress?: string,
+    @Arg('address', { nullable: true }) address?: string,
+    @Arg('birth', { nullable: true }) birth?: string,
+    @Arg('wallet', { nullable: true }) wallet?: number,
+    @Arg('phoneNumber', { nullable: true }) phoneNumber?: string,
   ): Promise<Buyer | null> {
     return this.buyerService.updateBuyer(
       id,
@@ -93,7 +99,7 @@ export class BuyerResolver {
       address,
       birth,
       wallet,
-      phoneNumber
+      phoneNumber,
     );
   }
 
@@ -104,7 +110,7 @@ export class BuyerResolver {
    * @returns {Promise<boolean>} True if the buyer was deleted successfully, otherwise false.
    */
   @Mutation(() => Boolean)
-  async deleteBuyer(@Arg("id") id: number): Promise<boolean> {
+  async deleteBuyer(@Arg('id') id: number): Promise<boolean> {
     return this.buyerService.delete(id);
   }
 
@@ -116,9 +122,15 @@ export class BuyerResolver {
    */
   @Mutation(() => Buyer, { nullable: true })
   async purchaseBook(
-    @Arg("buyerId") buyerId: number,
-    @Arg("bookId") bookId: number
+    @Arg('bookId') bookId: number,
+    @Ctx('ctx') ctx: Context,
   ): Promise<Buyer | null> {
-    return await this.buyerService.purchase(buyerId, bookId);
+    console.log('aqui');
+    console.log(ctx);
+    if (!ctx.userId) {
+      throw new Error('You must be logged in to purchase a book.');
+    }
+
+    return await this.buyerService.purchase(ctx.userId, bookId);
   }
 }
