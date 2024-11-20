@@ -1,16 +1,18 @@
-import { Field, Float, Int, ObjectType } from "type-graphql";
+import { Field, Float, Int, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
   ManyToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   Unique,
-} from "typeorm";
-import { Book } from "../book/book.entity";
+} from 'typeorm';
+import { Book } from '../book/book.entity';
+import { User } from '../user.entity';
 
 @ObjectType()
 @Entity()
-@Unique(["emailAddress"])
+@Unique(['emailAddress'])
 export class Buyer {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -40,8 +42,11 @@ export class Buyer {
   birth!: Date;
 
   @Field(() => Float)
-  @Column({ type: "float" })
+  @Column({ type: 'float' })
   wallet!: number;
+
+  @OneToOne(() => User, (user) => user.buyer)
+  user?: User;
 
   @Field(() => [Book])
   @ManyToMany(() => Book, (book) => book.buyers)

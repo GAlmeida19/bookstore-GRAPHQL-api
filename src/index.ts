@@ -1,24 +1,54 @@
-import express from "express";
-import { graphqlHTTP } from "express-graphql";
-import "reflect-metadata";
-import { AppDataSource } from "./config/data-source";
-import { createSchema } from "./schema";
+// index.ts
+
+import express, { Request } from 'express';
+import { graphqlHTTP } from 'express-graphql';
+import 'reflect-metadata';
+import { AppDataSource } from './config/data-source';
+import { createSchema } from './schema';
+import { Context } from './types/context';
+import { verifyToken } from './utils/jwtUtils';
+
+export const app = express();
 
 async function main() {
   await AppDataSource.initialize();
   const schema = await createSchema();
 
-  const app = express();
   app.use(
-    "/graphql",
-    graphqlHTTP({
-      schema,
-      graphiql: true,
-    })
+    '/graphql',
+    graphqlHTTP((req) => {
+      // Cast req to Express's Request type
+      const expressReq = req as Request;
+
+      console.log('Authorization Header:', expressReq.headers.authorization);
+
+      // Extract and verify token from the Authorization header
+      const token = expressReq.headers.authorization?.split(' ')[1];
+
+      console.log('Extracted Token:', token);
+
+      const user = token ? verifyToken(token) : null;
+
+      console.log('Decoded User Info:', user);
+
+      // Pass req and user into the context
+      const context: Context = {
+        req: expressReq,
+        user: user
+          ? { userId: user.userId, userRole: user.userRole }
+          : undefined,
+      };
+
+      return {
+        schema,
+        graphiql: true,
+        context, // Attach context to GraphQL
+      };
+    }),
   );
 
   app.listen(4000, () => {
-    console.log("Server running on http://localhost:4000/graphql");
+    console.log('Server running on http://localhost:4000/graphql');
   });
 }
 

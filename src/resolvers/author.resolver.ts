@@ -1,7 +1,7 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { Author } from "../entities/author/author.entity";
-import { categories } from "../enums/book.enum";
-import { AuthorService } from "../services/author.service";
+import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Author } from '../entities/author/author.entity';
+import { categories } from '../enums/book.enum';
+import { AuthorService } from '../services/author.service';
 
 @Resolver(() => Author)
 export class AuthorResolver {
@@ -24,7 +24,7 @@ export class AuthorResolver {
    * @returns {Promise<Author | null>} The author object if found, or null if not.
    */
   @Query(() => Author, { nullable: true })
-  async getAuthorById(@Arg("id") id: number): Promise<Author | null> {
+  async getAuthorById(@Arg('id') id: number): Promise<Author | null> {
     return this.authorService.findById(id);
   }
 
@@ -38,21 +38,21 @@ export class AuthorResolver {
    */
   @Mutation(() => Author)
   async createAuthor(
-    @Arg("name") name: string,
-    @Arg("birth") birth: string,
-    @Arg("categories", () => [categories]) categories: categories[]
+    @Arg('name') name: string,
+    @Arg('birth') birth: string,
+    @Arg('categories', () => [categories]) categories: categories[],
   ): Promise<Author> {
-    console.log("aqui");
+    console.log('aqui');
     return this.authorService.create(name, birth, categories);
   }
 
   @Mutation(() => Author, { nullable: true })
   async updateAuthor(
-    @Arg("id") id: number,
-    @Arg("name", { nullable: true }) name?: string,
-    @Arg("birth", { nullable: true }) birth?: string,
-    @Arg("categories", () => [categories], { nullable: true })
-    categories?: categories[]
+    @Arg('id') id: number,
+    @Arg('name', { nullable: true }) name?: string,
+    @Arg('birth', { nullable: true }) birth?: string,
+    @Arg('categories', () => [categories], { nullable: true })
+    categories?: categories[],
   ): Promise<Author | null> {
     return this.authorService.updateAuthor(id, name, birth, categories);
   }
@@ -64,7 +64,7 @@ export class AuthorResolver {
    * @returns {Promise<boolean>} True if the author was deleted successfully, otherwise false.
    */
   @Mutation(() => Boolean)
-  async deleteAuthor(@Arg("id") id: number): Promise<boolean> {
+  async deleteAuthor(@Arg('id') id: number): Promise<boolean> {
     return this.authorService.delete(id);
   }
 }

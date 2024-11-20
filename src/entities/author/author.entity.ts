@@ -1,17 +1,17 @@
-import { Field, Int, ObjectType } from "type-graphql";
+import { Field, Int, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
   Unique,
-} from "typeorm";
-import { categories } from "../../enums/book.enum";
-import { Book } from "../book/book.entity";
+} from 'typeorm';
+import { categories } from '../../enums/book.enum';
+import { Book } from '../book/book.entity';
 
 @ObjectType()
 @Entity()
-@Unique(["name"])
+@Unique(['name'])
 export class Author {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
@@ -27,7 +27,7 @@ export class Author {
 
   @Field(() => [categories])
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: categories,
     array: true,
   })

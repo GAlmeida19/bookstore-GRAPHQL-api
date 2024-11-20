@@ -1,7 +1,8 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { Book } from "../entities/book/book.entity";
-import { categories } from "../enums/book.enum";
-import { BookService } from "../services/book.service";
+import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
+import { Book } from '../entities/book/book.entity';
+import { categories } from '../enums/book.enum';
+import { RoleMiddleware } from '../middlewares/auth.middleware';
+import { BookService } from '../services/book.service';
 
 @Resolver(() => Book)
 export class BookResolver {
@@ -22,7 +23,7 @@ export class BookResolver {
    * @returns The book with the specified ID, or null if not found.
    */
   @Query(() => Book, { nullable: true })
-  async getBookById(@Arg("id") id: number): Promise<Book | null> {
+  async getBookById(@Arg('id') id: number): Promise<Book | null> {
     return this.bookService.findById(id);
   }
 
@@ -32,7 +33,7 @@ export class BookResolver {
    * @returns The book with the specified title, or null if not found.
    */
   @Query(() => Book, { nullable: true })
-  async getBookByTitle(@Arg("title") title: string): Promise<Book | null> {
+  async getBookByTitle(@Arg('title') title: string): Promise<Book | null> {
     return this.bookService.findByTitle(title);
   }
 
@@ -48,14 +49,15 @@ export class BookResolver {
    * @returns The newly created book.
    */
   @Mutation(() => Book)
+  @UseMiddleware(RoleMiddleware('MANAGER'))
   async createBook(
-    @Arg("title") title: string,
-    @Arg("publishedDate") publishedDate: string,
-    @Arg("authorId") authorId: number,
-    @Arg("category") category: categories,
-    @Arg("stock") stock: number,
-    @Arg("price") price: number,
-    @Arg("introduction") introduction: string
+    @Arg('title') title: string,
+    @Arg('publishedDate') publishedDate: string,
+    @Arg('authorId') authorId: number,
+    @Arg('category') category: categories,
+    @Arg('stock') stock: number,
+    @Arg('price') price: number,
+    @Arg('introduction') introduction: string,
   ): Promise<Book> {
     return this.bookService.create(
       title,
@@ -64,7 +66,7 @@ export class BookResolver {
       category,
       stock,
       price,
-      introduction
+      introduction,
     );
   }
 
@@ -81,13 +83,13 @@ export class BookResolver {
    */
   @Mutation(() => Book, { nullable: true })
   async updateBook(
-    @Arg("id") id: number,
-    @Arg("title", { nullable: true }) title?: string,
-    @Arg("publishedDate", { nullable: true }) publishedDate?: string,
-    @Arg("authorId", { nullable: true }) authorId?: number,
-    @Arg("category", { nullable: true }) category?: categories,
-    @Arg("stock", { nullable: true }) stock?: number,
-    @Arg("introduction", { nullable: true }) introduction?: string
+    @Arg('id') id: number,
+    @Arg('title', { nullable: true }) title?: string,
+    @Arg('publishedDate', { nullable: true }) publishedDate?: string,
+    @Arg('authorId', { nullable: true }) authorId?: number,
+    @Arg('category', { nullable: true }) category?: categories,
+    @Arg('stock', { nullable: true }) stock?: number,
+    @Arg('introduction', { nullable: true }) introduction?: string,
   ): Promise<Book | null> {
     return this.bookService.update(
       id,
@@ -96,7 +98,7 @@ export class BookResolver {
       authorId,
       category,
       stock,
-      introduction
+      introduction,
     );
   }
 
@@ -106,7 +108,7 @@ export class BookResolver {
    * @returns True if the book was deleted, false otherwise.
    */
   @Mutation(() => Boolean)
-  async deleteBook(@Arg("id") id: number): Promise<boolean> {
+  async deleteBook(@Arg('id') id: number): Promise<boolean> {
     return this.bookService.delete(id);
   }
 
@@ -116,7 +118,7 @@ export class BookResolver {
    * @returns A list of the 3 most similar books.
    */
   @Query(() => [Book], { nullable: true })
-  async similarBooks(@Arg("id") id: number): Promise<Book[]> {
+  async similarBooks(@Arg('id') id: number): Promise<Book[]> {
     return await this.bookService.findSimilarBooks(id);
   }
 }

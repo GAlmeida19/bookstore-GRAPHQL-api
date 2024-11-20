@@ -1,9 +1,13 @@
-import { AppDataSource } from "../config/data-source";
-import { Buyer } from "../entities/buyer/buyer.entity";
-import { BookService } from "./book.service";
+import bcrypt from 'bcryptjs';
+import { AppDataSource } from '../config/data-source';
+import { Buyer } from '../entities/buyer/buyer.entity';
+import { User } from '../entities/user.entity';
+import { userRole } from '../enums/book.enum';
+import { BookService } from './book.service';
 
 export class BuyerService {
   private buyerRepository = AppDataSource.getRepository(Buyer);
+  private userRepository = AppDataSource.getRepository(User);
   bookServie: BookService;
 
   constructor() {
@@ -15,7 +19,7 @@ export class BuyerService {
    * @returns {Promise<Buyer[]>} An array of buyers, each with their associated books.
    */
   async findAll(): Promise<Buyer[]> {
-    return this.buyerRepository.find({ relations: ["books"] });
+    return this.buyerRepository.find({ relations: ['books'] });
   }
 
   /**
@@ -26,7 +30,7 @@ export class BuyerService {
   async findById(id: number): Promise<Buyer | null> {
     return this.buyerRepository.findOne({
       where: { id },
-      relations: ["books"],
+      relations: ['books'],
     });
   }
 
@@ -49,19 +53,29 @@ export class BuyerService {
     address: string,
     birth: string,
     wallet: number,
-    phoneNumber?: string
+    password: string,
+    phoneNumber?: string,
   ): Promise<Buyer> {
     const emailRegex = /^[\w-.]+@[\w-]+\.[a-z]{2,}$/i;
     if (!emailRegex.test(emailAddress)) {
-      throw new Error("Invalid email address format");
+      throw new Error('Invalid email address format');
     }
 
     if (phoneNumber) {
       const phoneRegex = /^\d{9}$/;
       if (!phoneRegex.test(phoneNumber)) {
-        throw new Error("Phone number must be exactly 9 digits");
+        throw new Error('Phone number must be exactly 9 digits');
       }
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = new User();
+    user.emailAddress = emailAddress;
+    user.password = hashedPassword;
+    user.userRole = userRole.BUYER;
+
+    await this.userRepository.save(user);
 
     const newBuyer = this.buyerRepository.create({
       firstName,
@@ -97,11 +111,11 @@ export class BuyerService {
     address?: string,
     birth?: string,
     wallet?: number,
-    phoneNumber?: string
+    phoneNumber?: string,
   ): Promise<Buyer | null> {
     const buyer = await this.buyerRepository.findOne({ where: { id } });
     if (!buyer) {
-      throw new Error("Buyer not found");
+      throw new Error('Buyer not found');
     }
 
     if (firstName) buyer.firstName = firstName;
@@ -135,19 +149,19 @@ export class BuyerService {
   async purchase(buyerid: number, bookid: number): Promise<Buyer | null> {
     const buyer = await this.findById(buyerid);
     if (!buyer) {
-      throw new Error("Buyer not found");
+      throw new Error('Buyer not found');
     }
     const book = await this.bookServie.findById(bookid);
     if (!book) {
-      throw new Error("Book not found");
+      throw new Error('Book not found');
     }
 
     if (book.stock <= 0) {
-      throw new Error("Book is out of stock");
+      throw new Error('Book is out of stock');
     }
 
     if (buyer.wallet < book.price) {
-      throw new Error("Buyer does not have enough funds");
+      throw new Error('Buyer does not have enough funds');
     }
 
     buyer.wallet -= book.price;
@@ -162,7 +176,7 @@ export class BuyerService {
       undefined,
       undefined,
       undefined,
-      book.stock
+      book.stock,
     );
 
     return buyer;

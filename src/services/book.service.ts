@@ -1,8 +1,8 @@
-import * as stringSimilarity from "string-similarity";
-import { AppDataSource } from "../config/data-source";
-import { Author } from "../entities/author/author.entity";
-import { Book } from "../entities/book/book.entity";
-import { categories } from "../enums/book.enum";
+import * as stringSimilarity from 'string-similarity';
+import { AppDataSource } from '../config/data-source';
+import { Author } from '../entities/author/author.entity';
+import { Book } from '../entities/book/book.entity';
+import { categories } from '../enums/book.enum';
 
 export class BookService {
   private bookRepository = AppDataSource.getRepository(Book);
@@ -13,7 +13,7 @@ export class BookService {
    * @returns A list of all books, each with its associated author.
    */
   async findAll(): Promise<Book[]> {
-    return this.bookRepository.find({ relations: ["author", "buyers"] });
+    return this.bookRepository.find({ relations: ['author', 'buyers'] });
   }
 
   /**
@@ -24,7 +24,7 @@ export class BookService {
   async findById(id: number): Promise<Book | null> {
     return this.bookRepository.findOne({
       where: { id },
-      relations: ["author", "buyers"],
+      relations: ['author', 'buyers'],
     });
   }
 
@@ -36,7 +36,7 @@ export class BookService {
   async findByTitle(title: string): Promise<Book | null> {
     return this.bookRepository.findOne({
       where: { title },
-      relations: ["author", "buyers"],
+      relations: ['author', 'buyers'],
     });
   }
 
@@ -58,14 +58,14 @@ export class BookService {
     category: categories,
     stock: number,
     price: number,
-    introduction: string
+    introduction: string,
   ): Promise<Book> {
     const author = await this.authorRepository.findOne({
       where: { id: authorId },
     });
 
     if (!author) {
-      throw new Error("Author not found");
+      throw new Error('Author not found');
     }
 
     const newBook = this.bookRepository.create({
@@ -99,11 +99,11 @@ export class BookService {
     authorId?: number,
     category?: categories,
     stock?: number,
-    introduction?: string
+    introduction?: string,
   ): Promise<Book | null> {
     const book = await this.bookRepository.findOne({ where: { id } });
     if (!book) {
-      throw new Error("Book not found");
+      throw new Error('Book not found');
     }
 
     if (title) book.title = title;
@@ -113,7 +113,7 @@ export class BookService {
         where: { id: authorId },
       });
       if (!author) {
-        throw new Error("Author not found");
+        throw new Error('Author not found');
       }
       book.author = author;
     }
@@ -143,16 +143,16 @@ export class BookService {
   async findSimilarBooks(id: number): Promise<Book[]> {
     const book = await this.bookRepository.findOne({
       where: { id },
-      relations: ["author"],
+      relations: ['author'],
     });
 
     if (!book) {
-      throw new Error("Book not found");
+      throw new Error('Book not found');
     }
 
     const similarBooks = await this.bookRepository.find({
       where: { category: book.category },
-      relations: ["author"],
+      relations: ['author'],
     });
 
     const filteredBooks = similarBooks.filter((b) => b.id !== book.id);
@@ -161,12 +161,12 @@ export class BookService {
       book: b,
       similarity: stringSimilarity.compareTwoStrings(
         book.introduction,
-        b.introduction
+        b.introduction,
       ),
     }));
 
     const sortedBooks = bookIntroductions.sort(
-      (a, b) => b.similarity - a.similarity
+      (a, b) => b.similarity - a.similarity,
     );
     const top3SimilarBooks = sortedBooks.slice(0, 3).map((b) => b.book);
 
