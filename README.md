@@ -7,6 +7,7 @@ This project is a fully functional Bookstore API built with GraphQL, providing c
 - **Book**
 - **Author**
 - **Buyer**
+- **Employee**
 
 Note: This project is still under active development, so additional features and enhancements are in progress.
 
@@ -46,7 +47,7 @@ Note: This project is still under active development, so additional features and
 To start the server, use the following command:
 
 ```bash
-npx ts-node src/index.ts
+npm run start
 ```
 
 The server will run locally at:
@@ -57,7 +58,7 @@ http://localhost:4000/graphql
 
 ### GraphQL Playground
 
-Access the GraphQL Playground at `http://localhost:4000` to explore and run queries and mutations.
+Access the GraphQL Playground at `http://localhost:4000/graphql` to explore and run queries and mutations.
 
 ## Features
 
@@ -71,6 +72,7 @@ Access the GraphQL Playground at `http://localhost:4000` to explore and run quer
 1. **Book**
 2. **Author**
 3. **Buyer**
+4. **Employee**
 
 ## Future Enhancements
 
