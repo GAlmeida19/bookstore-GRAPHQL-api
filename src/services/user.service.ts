@@ -18,8 +18,6 @@ export class UserService {
       throw new Error('Invalid password');
     }
 
-    console.log(user.userRole);
-
     // Generate a JWT token
     return generateToken(user.id, user.userRole);
   }
