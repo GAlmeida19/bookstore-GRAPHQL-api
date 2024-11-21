@@ -22,7 +22,6 @@ async function main() {
 
       console.log('Authorization Header:', expressReq.headers.authorization);
 
-      // Extract and verify token from the Authorization header
       const token = expressReq.headers.authorization?.split(' ')[1];
 
       console.log('Extracted Token:', token);
@@ -31,7 +30,6 @@ async function main() {
 
       console.log('Decoded User Info:', user);
 
-      // Pass req and user into the context
       const context: Context = {
         req: expressReq,
         user: user
@@ -42,7 +40,7 @@ async function main() {
       return {
         schema,
         graphiql: true,
-        context, // Attach context to GraphQL
+        context,
       };
     }),
   );

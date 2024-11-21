@@ -54,7 +54,6 @@ export class BuyerResolver {
     @Arg('password') password: string,
     @Arg('phoneNumber') phoneNumber?: string,
   ): Promise<Buyer> {
-    console.log('aqui');
     return this.buyerService.create(
       firstName,
       lastName,
@@ -125,8 +124,6 @@ export class BuyerResolver {
     @Arg('bookId') bookId: number,
     @Ctx('ctx') ctx: Context,
   ): Promise<Buyer | null> {
-    console.log('aqui');
-    console.log(ctx);
     if (!ctx.userId) {
       throw new Error('You must be logged in to purchase a book.');
     }

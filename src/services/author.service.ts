@@ -83,6 +83,9 @@ export class AuthorService {
    */
   async delete(id: number): Promise<boolean> {
     const result = await this.authorRepository.delete(id);
+    if (result.affected === 0) {
+      throw new Error('Author not found or already deleted');
+    }
     return result.affected !== 0;
   }
 }

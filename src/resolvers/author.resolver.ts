@@ -42,7 +42,6 @@ export class AuthorResolver {
     @Arg('birth') birth: string,
     @Arg('categories', () => [categories]) categories: categories[],
   ): Promise<Author> {
-    console.log('aqui');
     return this.authorService.create(name, birth, categories);
   }
 
