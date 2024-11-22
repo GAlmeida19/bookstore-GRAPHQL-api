@@ -1,10 +1,16 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql';
-import { Buyer } from '../entities/buyer/buyer.entity';
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from 'type-graphql';
+import { Buyer } from '../entities/buyer.entity';
+import { userRole } from '../enums/book.enum';
+import { hasRole } from '../middlewares/auth.middleware';
 import { BuyerService } from '../services/buyer.service';
-
-export interface Context {
-  userId?: number;
-}
+import { Context } from '../types/context';
 
 @Resolver(() => Buyer)
 export class BuyerResolver {
@@ -120,14 +126,16 @@ export class BuyerResolver {
    * @returns The updated buyer after purch, () => [Int]asing the books.
    */
   @Mutation(() => Buyer, { nullable: true })
+  @UseMiddleware(hasRole([userRole.BUYER]))
   async purchaseBook(
     @Arg('bookId') bookId: number,
-    @Ctx('ctx') ctx: Context,
+    @Ctx() { user }: Context,
   ): Promise<Buyer | null> {
-    if (!ctx.userId) {
-      throw new Error('You must be logged in to purchase a book.');
+    if (!user) {
+      throw new Error('You must be logged in to purchase a book');
     }
 
-    return await this.buyerService.purchase(ctx.userId, bookId);
+    const buyerId = user.userId;
+    return await this.buyerService.purchase(buyerId, bookId);
   }
 }

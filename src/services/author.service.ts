@@ -1,5 +1,5 @@
 import { AppDataSource } from '../config/data-source';
-import { Author } from '../entities/author/author.entity';
+import { Author } from '../entities/author.entity';
 import { categories } from '../enums/book.enum';
 
 export class AuthorService {

@@ -1,22 +1,23 @@
-// middleware/authMiddleware.ts
-
 import { MiddlewareFn } from 'type-graphql';
+import { userRole } from '../enums/book.enum'; // Import your userRole enum
 import { Context } from '../types/context';
 
-export const RoleMiddleware: (requiredRole: string) => MiddlewareFn<Context> =
-  (requiredRole) =>
-  async ({ context }, next) => {
-    const { user } = context;
-
-    console.log('User in context:', user);
-
-    if (!user) {
+/**
+ * Middleware to check if the user has one of the allowed roles.
+ * @param roles - An array of user roles that are allowed to execute the mutation.
+ */
+export const hasRole = (roles: userRole[]): MiddlewareFn<Context> => {
+  return ({ context }, next) => {
+    if (!context.user) {
       throw new Error('Not authenticated');
     }
 
-    if (user.userRole !== requiredRole) {
-      throw new Error('Insufficient permissions');
+    if (!roles.includes(context.user.userRole)) {
+      throw new Error(
+        'You do not have the required permissions to perform this action',
+      );
     }
 
     return next();
   };
+};

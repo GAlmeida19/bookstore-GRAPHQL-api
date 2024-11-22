@@ -8,9 +8,9 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { categories } from '../../enums/book.enum';
-import { Author } from '../author/author.entity';
-import { Buyer } from '../buyer/buyer.entity';
+import { categories } from '../enums/book.enum';
+import { Author } from './author.entity';
+import { Buyer } from './buyer.entity';
 
 @ObjectType()
 @Entity()

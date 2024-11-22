@@ -7,8 +7,8 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { Book } from '../book/book.entity';
-import { User } from '../user.entity';
+import { Book } from './book.entity';
+import { User } from './user.entity';
 
 @ObjectType()
 @Entity()

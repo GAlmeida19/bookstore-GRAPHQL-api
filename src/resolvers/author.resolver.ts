@@ -1,5 +1,5 @@
 import { Arg, Mutation, Query, Resolver } from 'type-graphql';
-import { Author } from '../entities/author/author.entity';
+import { Author } from '../entities/author.entity';
 import { categories } from '../enums/book.enum';
 import { AuthorService } from '../services/author.service';
 

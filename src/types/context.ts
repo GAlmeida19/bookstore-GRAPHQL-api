@@ -1,8 +1,8 @@
-// types/Context.ts
-
-import { Request } from 'express';
+import { Request, Response } from 'express';
+import { userRole } from '../enums/book.enum';
 
 export interface Context {
-  req: Request; // The HTTP request (to access headers, etc.)
-  user?: { userId: number; userRole: string }; // Optional: Populated after middleware
+  req: Request;
+  res: Response;
+  user?: { userId: number; userRole: userRole };
 }

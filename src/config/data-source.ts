@@ -1,14 +1,11 @@
 import dotenv from 'dotenv';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Author } from '../entities/author/author.entity';
-import { Book } from '../entities/book/book.entity';
-import { Buyer } from '../entities/buyer/buyer.entity';
-import { Employee } from '../entities/employee.entity';
+import { Author, Book, Buyer, Employee } from '../entities';
 import { User } from '../entities/user.entity';
+
 dotenv.config();
 
-//TODO: ADD ENTITYS
 export const AppDataSource = new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST,
@@ -20,8 +17,6 @@ export const AppDataSource = new DataSource({
   synchronize: true,
   // logging: true,
 });
-
-//TODO: ADICIONAR INDEXS
 
 export async function initializeDataSource(): Promise<void> {
   if (!AppDataSource.isInitialized) {

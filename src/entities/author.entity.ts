@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
-import { categories } from '../../enums/book.enum';
-import { Book } from '../book/book.entity';
+import { categories } from '../enums/book.enum';
+import { Book } from './book.entity';
 
 @ObjectType()
 @Entity()
@@ -22,7 +22,7 @@ export class Author {
   name!: string;
 
   @Field(() => Date)
-  @Column()
+  @Column('timestamp')
   birth!: Date;
 
   @Field(() => [categories])

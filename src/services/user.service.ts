@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
+import { Response } from 'express';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../entities/user.entity';
 import { generateToken } from '../utils/jwtUtils';
-
 export class UserService {
   private userRepository = AppDataSource.getRepository(User);
 
@@ -12,13 +12,20 @@ export class UserService {
       throw new Error('User not found');
     }
 
-    // Compare the password with the stored hash
     const isValid = await bcrypt.compare(password, user.password);
     if (!isValid) {
       throw new Error('Invalid password');
     }
-
-    // Generate a JWT token
     return generateToken(user.id, user.userRole);
+  }
+
+  /**
+   * Logs out the user by clearing the session or JWT token.
+   * @param res Express Response object to clear cookies if necessary.
+   * @returns A success message.
+   */
+  async logout(res: Response): Promise<string> {
+    res.clearCookie('token', { httpOnly: true });
+    return 'Successfully logged out';
   }
 }

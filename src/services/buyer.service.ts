@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { AppDataSource } from '../config/data-source';
-import { Buyer } from '../entities/buyer/buyer.entity';
+import { Buyer } from '../entities/buyer.entity';
 import { User } from '../entities/user.entity';
 import { userRole } from '../enums/book.enum';
 import { BookService } from './book.service';
@@ -161,7 +161,7 @@ export class BuyerService {
     }
 
     if (buyer.wallet < book.price) {
-      throw new Error('Buyer does not have enough funds');
+      throw new Error('You do not have enough funds');
     }
 
     buyer.wallet -= book.price;

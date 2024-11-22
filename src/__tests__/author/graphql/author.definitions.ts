@@ -1,8 +1,40 @@
+export type AuthorResponse = {
+  data: {
+    createAuthor: {
+      id: number;
+      name: string;
+      birth: string;
+      categories: string[];
+    };
+    updateAuthor: {
+      id: number;
+      name: string;
+      birth: string;
+      categories: string[];
+    };
+    getAuthorById: {
+      id: number;
+      name: string;
+      birth: string;
+      categories: string[];
+    };
+    getAllAuthors: [
+      {
+        id: number;
+        name: string;
+        birth: string;
+        categories: string[];
+      },
+    ];
+    deleteAuthor: boolean;
+  };
+};
+
 export const CREATE_AUTHOR = `
   mutation createAuthor {
     createAuthor(
       name: "Mark Twain"
-      birth: "1903-06-25T00:00:00.000Z"
+      birth: "${new Date('1903-06-25').toISOString()}"
       categories: [FICTION]
     ) {
       id
