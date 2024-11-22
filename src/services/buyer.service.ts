@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { AppDataSource } from '../config/data-source';
+import { Address } from '../entities/address.entity';
 import { Buyer } from '../entities/buyer.entity';
 import { User } from '../entities/user.entity';
 import { userRole } from '../enums/book.enum';
@@ -7,6 +8,7 @@ import { BookService } from './book.service';
 
 export class BuyerService {
   private buyerRepository = AppDataSource.getRepository(Buyer);
+  private addressRepository = AppDataSource.getRepository(Address);
   private userRepository = AppDataSource.getRepository(User);
   bookServie: BookService;
 
@@ -19,7 +21,9 @@ export class BuyerService {
    * @returns {Promise<Buyer[]>} An array of buyers, each with their associated books.
    */
   async findAll(): Promise<Buyer[]> {
-    return this.buyerRepository.find({ relations: ['books'] });
+    return this.buyerRepository.find({
+      relations: ['books', 'user', 'addresses'],
+    });
   }
 
   /**
@@ -30,19 +34,18 @@ export class BuyerService {
   async findById(id: number): Promise<Buyer | null> {
     return this.buyerRepository.findOne({
       where: { id },
-      relations: ['books'],
+      relations: ['books', 'user', 'addresses'],
     });
   }
 
   /**
    * Creates a new buyer with the specified details.
-   * @param firstName The first name of the buyer.
-   * @param lastName The last name of the buyer.
-   * @param emailAddress The email address of the buyer.
-   * @param address The address of the buyer.
-   * @param birth The birth date of the buyer.
-   * @param wallet The wallet balance of the buyer.
-   * @param phoneNumber (Optional) The phone number of the buyer.
+   * @param {string}  firstName The first name of the buyer.
+   * @param {string}  lastName The last name of the buyer.
+   * @param {string}  emailAddress The email address of the buyer.
+   * @param {date}    birth The birth date of the buyer.
+   * @param {float}   wallet The wallet balance of the buyer.
+   * @param {int}     phoneNumber (Optional) The phone number of the buyer.
    * @returns {Promise<Buyer>} The newly created buyer.
    * @throws {Error} Throws error if the email or phone number is invalid.
    */
@@ -50,7 +53,6 @@ export class BuyerService {
     firstName: string,
     lastName: string,
     emailAddress: string,
-    address: string,
     birth: string,
     wallet: number,
     password: string,
@@ -68,6 +70,11 @@ export class BuyerService {
       }
     }
 
+    const birthDate = new Date(birth);
+    if (isNaN(birthDate.getTime())) {
+      throw new Error('Invalid birth date format.');
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User();
@@ -81,10 +88,10 @@ export class BuyerService {
       firstName,
       lastName,
       emailAddress,
-      address,
       phoneNumber,
-      birth,
+      birth: birthDate,
       wallet,
+      user,
     });
 
     return this.buyerRepository.save(newBuyer);
@@ -108,7 +115,6 @@ export class BuyerService {
     firstName?: string,
     lastName?: string,
     emailAddress?: string,
-    address?: string,
     birth?: string,
     wallet?: number,
     phoneNumber?: string,
@@ -121,7 +127,6 @@ export class BuyerService {
     if (firstName) buyer.firstName = firstName;
     if (lastName) buyer.lastName = lastName;
     if (emailAddress) buyer.emailAddress = emailAddress;
-    if (address) buyer.address = address;
     if (wallet) buyer.wallet = wallet;
     if (phoneNumber) buyer.phoneNumber = phoneNumber;
     if (birth) buyer.birth = new Date(birth);
@@ -130,12 +135,26 @@ export class BuyerService {
   }
 
   /**
-   * Deletes a buyer by their ID.
+   * Deletes a buyer and their associated user by their ID.
    * @param {number} id - The ID of the buyer to delete.
-   * @returns {Promise<boolean>} True if the buyer was successfully deleted, otherwise false.
+   * @returns {Promise<boolean>} True if the buyer and user were successfully deleted.
+   * @throws {Error} Throws an error if the buyer with the specified ID cannot be found.
    */
   async delete(id: number): Promise<boolean> {
+    const buyer = await this.buyerRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!buyer) {
+      throw new Error(`Buyer with ID ${id} not found.`);
+    }
+
     const result = await this.buyerRepository.delete(id);
+
+    if (buyer.user) {
+      await this.userRepository.delete(buyer.user.id);
+    }
     return result.affected !== 0;
   }
 

@@ -2,6 +2,7 @@ import { Field, Int, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
+  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -45,6 +46,7 @@ export class Employee {
   role!: employeeRoles;
 
   @Field(() => Int)
-  @OneToOne(() => User, (user) => user.employee)
+  @OneToOne(() => User, (user) => user.employee, { cascade: true })
+  @JoinColumn()
   user!: User;
 }

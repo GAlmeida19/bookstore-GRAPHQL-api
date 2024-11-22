@@ -9,12 +9,14 @@ import {
 import { Buyer } from '../entities/buyer.entity';
 import { userRole } from '../enums/book.enum';
 import { hasRole } from '../middlewares/auth.middleware';
+import { AddressService } from '../services/address.service';
 import { BuyerService } from '../services/buyer.service';
 import { Context } from '../types/context';
 
 @Resolver(() => Buyer)
 export class BuyerResolver {
   private buyerService = new BuyerService();
+  private addressService = new AddressService();
 
   /**
    * Retrieves a list of all buyers.
@@ -54,7 +56,6 @@ export class BuyerResolver {
     @Arg('firstName') firstName: string,
     @Arg('lastName') lastName: string,
     @Arg('emailAddress') emailAddress: string,
-    @Arg('address') address: string,
     @Arg('birth') birth: string,
     @Arg('wallet') wallet: number,
     @Arg('password') password: string,
@@ -64,7 +65,6 @@ export class BuyerResolver {
       firstName,
       lastName,
       emailAddress,
-      address,
       birth,
       wallet,
       password,
@@ -91,7 +91,6 @@ export class BuyerResolver {
     @Arg('firstName', { nullable: true }) firstName?: string,
     @Arg('lastName', { nullable: true }) lastName?: string,
     @Arg('emailAddress', { nullable: true }) emailAddress?: string,
-    @Arg('address', { nullable: true }) address?: string,
     @Arg('birth', { nullable: true }) birth?: string,
     @Arg('wallet', { nullable: true }) wallet?: number,
     @Arg('phoneNumber', { nullable: true }) phoneNumber?: string,
@@ -101,7 +100,6 @@ export class BuyerResolver {
       firstName,
       lastName,
       emailAddress,
-      address,
       birth,
       wallet,
       phoneNumber,
@@ -121,9 +119,9 @@ export class BuyerResolver {
 
   /**
    * Mutation to handle the purchase of multiple books by a buyer.
-   * @param buyerId The ID of the buyer making the purchase.
-   * @param bookIds An array of book IDs to be purchased.
-   * @returns The updated buyer after purch, () => [Int]asing the books.
+   * @param {id} buyerId The ID of the buyer making the purchase.
+   * @param {string} [bookIds] An array of book IDs to be purchased.
+   * @returns {Promise<Buyer|null>} The updated buyer after purch, () => [Int]asing the books.
    */
   @Mutation(() => Buyer, { nullable: true })
   @UseMiddleware(hasRole([userRole.BUYER]))

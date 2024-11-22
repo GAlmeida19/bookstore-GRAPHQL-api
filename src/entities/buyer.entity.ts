@@ -2,11 +2,14 @@ import { Field, Float, Int, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
+  JoinColumn,
   ManyToMany,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
+import { Address } from './address.entity';
 import { Book } from './book.entity';
 import { User } from './user.entity';
 
@@ -30,10 +33,6 @@ export class Buyer {
   @Column()
   emailAddress!: string;
 
-  @Field()
-  @Column()
-  address!: string;
-
   @Column({ nullable: true })
   phoneNumber!: string;
 
@@ -45,19 +44,15 @@ export class Buyer {
   @Column({ type: 'float' })
   wallet!: number;
 
-  @OneToOne(() => User, (user) => user.buyer)
-  user?: User;
+  @OneToOne(() => User, (user) => user.employee, { cascade: true, eager: true }) // Owner side
+  @JoinColumn() // Adds a foreign key in Employee table
+  user!: User;
 
   @Field(() => [Book])
   @ManyToMany(() => Book, (book) => book.buyers)
   books!: Book[];
 
-  // @OneToMany(type => Address, address => address.customer)
-  //   addresses: Address[];
-
-  // @OneToOne(type => User, { eager: true })
-  //   @JoinColumn()
-  //   user?: User;
+  @Field(() => [Address])
+  @OneToMany(() => Address, (address) => address.buyer)
+  addresses!: Address[];
 }
-
-//TODO: add entity address? relate to employee
