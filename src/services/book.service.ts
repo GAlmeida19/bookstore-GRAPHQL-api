@@ -1,7 +1,7 @@
 import * as stringSimilarity from 'string-similarity';
 import { AppDataSource } from '../config/data-source';
-import { Author } from '../entities/author/author.entity';
-import { Book } from '../entities/book/book.entity';
+import { Author } from '../entities/author.entity';
+import { Book } from '../entities/book.entity';
 import { categories } from '../enums/book.enum';
 
 export class BookService {

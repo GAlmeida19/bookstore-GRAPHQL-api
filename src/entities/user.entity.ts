@@ -7,7 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 import { userRole } from '../enums/book.enum';
-import { Buyer } from './buyer/buyer.entity';
+import { Buyer } from './buyer.entity';
 import { Employee } from './employee.entity';
 
 @ObjectType()

@@ -1,9 +1,11 @@
 import { buildSchema } from 'type-graphql';
-import { AuthorResolver } from './resolvers/author.resolver';
-import { BookResolver } from './resolvers/book.resolver';
-import { BuyerResolver } from './resolvers/buyer.resolver';
-import { EmployeeResolver } from './resolvers/employee.resolver';
-import { AuthResolver } from './resolvers/user.resolver';
+import {
+  AuthorResolver,
+  BookResolver,
+  BuyerResolver,
+  EmployeeResolver,
+  UserResolver,
+} from './resolvers';
 
 export const createSchema = () =>
   buildSchema({
@@ -11,9 +13,7 @@ export const createSchema = () =>
       BookResolver,
       AuthorResolver,
       BuyerResolver,
-      AuthResolver,
+      UserResolver,
       EmployeeResolver,
     ],
   });
-
-//TODO: create indexs

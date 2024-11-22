@@ -1,7 +1,7 @@
 import { Arg, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql';
-import { Book } from '../entities/book/book.entity';
-import { categories } from '../enums/book.enum';
-import { RoleMiddleware } from '../middlewares/auth.middleware';
+import { Book } from '../entities/book.entity';
+import { categories, userRole } from '../enums/book.enum';
+import { hasRole } from '../middlewares/auth.middleware';
 import { BookService } from '../services/book.service';
 
 @Resolver(() => Book)
@@ -49,7 +49,7 @@ export class BookResolver {
    * @returns The newly created book.
    */
   @Mutation(() => Book)
-  @UseMiddleware(RoleMiddleware('MANAGER'))
+  @UseMiddleware(hasRole([userRole.MANAGER]))
   async createBook(
     @Arg('title') title: string,
     @Arg('publishedDate') publishedDate: string,

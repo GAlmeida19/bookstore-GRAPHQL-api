@@ -3,6 +3,7 @@ import { buildSchema } from 'type-graphql';
 import { AppDataSource, initializeDataSource } from '../../config/data-source';
 import { AuthorResolver } from '../../resolvers/author.resolver';
 import {
+  AuthorResponse,
   CREATE_AUTHOR,
   DELETE_AUTHOR,
   GET_ALL_AUTHORS,
@@ -10,40 +11,22 @@ import {
   UPDATE_AUTHOR,
 } from './graphql/author.definitions';
 
-type CreateAuthorResponse = {
-  data: {
-    createAuthor: {
-      id: number;
-      name: string;
-      birth: string;
-      categories: string[];
-    };
-    updateAuthor: {
-      id: number;
-      name: string;
-      birth: string;
-      categories: string[];
-    };
-    getAuthorById: {
-      id: number;
-      name: string;
-      birth: string;
-      categories: string[];
-    };
-    getAllAuthors: [
-      {
-        id: number;
-        name: string;
-        birth: string;
-        categories: string[];
-      },
-    ];
-    deleteAuthor: boolean;
-  };
+//TODO: CREATE NEW DATABASE AND DESTROY IT AFTER
+const cleanDatabase = async () => {
+  if (AppDataSource.isInitialized) {
+    const entities = AppDataSource.entityMetadatas;
+    for (const entity of entities) {
+      const repository = AppDataSource.getRepository(entity.name);
+      await repository.query(
+        `TRUNCATE TABLE "${entity.tableName}" RESTART IDENTITY CASCADE;`,
+      );
+    }
+  }
 };
 
 beforeAll(async () => {
   await initializeDataSource();
+  await cleanDatabase();
 });
 
 afterAll(async () => {
@@ -68,7 +51,9 @@ describe('AuthorResolver', () => {
         schema,
         source: CREATE_AUTHOR,
         contextValue: { dataSource: AppDataSource },
-      })) as CreateAuthorResponse;
+      })) as AuthorResponse;
+
+      console.log(result);
 
       createdAuthorId = result.data.createAuthor.id;
       expect(result.data?.createAuthor.name).toBe('Mark Twain');
@@ -92,7 +77,7 @@ describe('AuthorResolver', () => {
         schema,
         source: UPDATE_AUTHOR(authorId, 'George Orwell'),
         contextValue: { dataSource: AppDataSource },
-      })) as CreateAuthorResponse;
+      })) as AuthorResponse;
 
       expect(result.data?.updateAuthor.name).toBe('George Orwell');
     });
@@ -115,7 +100,7 @@ describe('AuthorResolver', () => {
         schema,
         source: GET_ONE_AUTHOR(createdAuthorId),
         contextValue: { dataSource: AppDataSource },
-      })) as CreateAuthorResponse;
+      })) as AuthorResponse;
 
       expect(result.data?.getAuthorById.name).toBe('George Orwell');
     });
@@ -125,7 +110,7 @@ describe('AuthorResolver', () => {
         schema,
         source: GET_ONE_AUTHOR(1000),
         contextValue: { dataSource: AppDataSource },
-      })) as CreateAuthorResponse;
+      })) as AuthorResponse;
 
       expect(result.data?.getAuthorById).toBe(null);
     });
@@ -135,7 +120,7 @@ describe('AuthorResolver', () => {
         schema,
         source: GET_ALL_AUTHORS,
         contextValue: { dataSource: AppDataSource },
-      })) as CreateAuthorResponse;
+      })) as AuthorResponse;
 
       expect(result.data?.getAllAuthors).toHaveLength(1);
       expect(result.data?.getAllAuthors[0].name).toBe('George Orwell');
@@ -148,7 +133,7 @@ describe('AuthorResolver', () => {
         schema,
         source: DELETE_AUTHOR(createdAuthorId),
         contextValue: { dataSource: AppDataSource },
-      })) as CreateAuthorResponse;
+      })) as AuthorResponse;
 
       expect(result.data?.deleteAuthor).toBe(true);
     });

@@ -14,28 +14,43 @@ export enum categories {
   UNKNOWN = 'UNKNOWN',
 }
 
+/**
+ * Enum representing the roles of the employees
+ */
 export enum employeeRoles {
   ADMIN = 'ADMIN',
   MANAGER = 'MANAGER',
   INTERN = 'INTERN',
 }
 
+/**
+ * Enum representing the roles of the user
+ */
 export enum userRole {
   MANAGER = 'MANAGER',
   BUYER = 'BUYER',
 }
 
+/**
+ * registered enumType categories
+ */
 registerEnumType(categories, {
   name: 'Categories',
-  description: 'Available categories for books', // Optional: You can provide a description
+  description: 'Available categories for books',
 });
 
+/**
+ * Rgistered enumType employeeRoles
+ */
 registerEnumType(employeeRoles, {
-  name: 'employeeRoles', // This is the name that will be used in GraphQL
-  description: 'Available roles for employees', // Optional: You can provide a description
+  name: 'employeeRoles',
+  description: 'Available roles for employees',
 });
 
+/**
+ * Registered enumType userRole
+ */
 registerEnumType(userRole, {
-  name: 'userRole', // This is the name that will be used in GraphQL
-  description: 'Available roles for users', // Optional: You can provide a description
+  name: 'userRole',
+  description: 'Available roles for users',
 });
