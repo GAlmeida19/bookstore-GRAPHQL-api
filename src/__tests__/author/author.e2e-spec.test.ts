@@ -53,8 +53,6 @@ describe('AuthorResolver', () => {
         contextValue: { dataSource: AppDataSource },
       })) as AuthorResponse;
 
-      console.log(result);
-
       createdAuthorId = result.data.createAuthor.id;
       expect(result.data?.createAuthor.name).toBe('Mark Twain');
     });

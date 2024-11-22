@@ -34,7 +34,7 @@ export const CREATE_AUTHOR = `
   mutation createAuthor {
     createAuthor(
       name: "Mark Twain"
-      birth: "${new Date('1903-06-25').toISOString()}"
+      birth: "1903-06-25T00:00:00.000Z"
       categories: [FICTION]
     ) {
       id

@@ -77,6 +77,7 @@ export class EmployeeService {
       phoneNumber,
       birth,
       role,
+      user,
     });
 
     return this.employeeRepository.save(newEmployee);
@@ -120,15 +121,26 @@ export class EmployeeService {
   }
 
   /**
-   * Deletes an employee by their ID.
-   *
-   * @param {number} id - The ID of the employee to be deleted.
-   * @returns {Promise<boolean>} True if the employee was deleted successfully, otherwise false.
+   * Deletes a employee and their associated user by their ID.
+   * @param {number} id - The ID of the employee to delete.
+   * @returns {Promise<boolean>} True if the employee and user were successfully deleted.
+   * @throws {Error} Throws an error if the employee with the specified ID cannot be found.
    */
   async delete(id: number): Promise<boolean> {
+    const employee = await this.employeeRepository.findOne({
+      where: { id },
+      relations: ['user'],
+    });
+
+    if (!employee) {
+      throw new Error(`Buyer with ID ${id} not found.`);
+    }
+
     const result = await this.employeeRepository.delete(id);
+
+    if (employee.user) {
+      await this.userRepository.delete(employee.user.id);
+    }
     return result.affected !== 0;
   }
 }
-
-//TODO: update deletes to also delete users

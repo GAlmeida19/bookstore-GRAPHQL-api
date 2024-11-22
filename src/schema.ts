@@ -6,6 +6,7 @@ import {
   EmployeeResolver,
   UserResolver,
 } from './resolvers';
+import { AddressResolver } from './resolvers/address.resolver';
 
 export const createSchema = () =>
   buildSchema({
@@ -15,5 +16,6 @@ export const createSchema = () =>
       BuyerResolver,
       UserResolver,
       EmployeeResolver,
+      AddressResolver,
     ],
   });

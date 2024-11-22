@@ -42,7 +42,7 @@ export class AuthorService {
   ): Promise<Author> {
     const newAuthor = this.authorRepository.create({
       name,
-      birth,
+      birth: new Date(birth),
       categories,
     });
 
