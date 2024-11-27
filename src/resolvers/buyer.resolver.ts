@@ -9,14 +9,12 @@ import {
 import { Buyer } from '../entities/buyer.entity';
 import { userRole } from '../enums/book.enum';
 import { hasRole } from '../middlewares/auth.middleware';
-import { AddressService } from '../services/address.service';
 import { BuyerService } from '../services/buyer.service';
 import { Context } from '../types/context';
 
 @Resolver(() => Buyer)
 export class BuyerResolver {
   private buyerService = new BuyerService();
-  private addressService = new AddressService();
 
   /**
    * Retrieves a list of all buyers.
@@ -129,11 +127,29 @@ export class BuyerResolver {
     @Arg('bookId') bookId: number,
     @Ctx() { user }: Context,
   ): Promise<Buyer | null> {
+    console.log('aqui0');
     if (!user) {
       throw new Error('You must be logged in to purchase a book');
     }
 
-    const buyerId = user.userId;
-    return await this.buyerService.purchase(buyerId, bookId);
+    return await this.buyerService.purchase(user.userId, bookId);
+  }
+
+  /**
+   * Mutation to add a book to the buyer's wishlist.
+   * @param {number} bookId The ID of the book to be added to the wishlist.
+   * @param {Context} param1 The context object containing the logged-in user's information.
+   * @returns {Promise<Buyer|null>} The updated buyer after adding the book to the wishlist, or null if the operation fails.
+   */
+  @Mutation(() => Buyer, { nullable: true })
+  @UseMiddleware(hasRole([userRole.BUYER]))
+  async addBookToWishlist(
+    @Arg('bookId') bookId: number,
+    @Ctx() { user }: Context,
+  ): Promise<Buyer | null> {
+    if (!user) {
+      throw new Error('You must be logged in to purchase a book');
+    }
+    return await this.buyerService.addToWishlist(user.userId, bookId);
   }
 }

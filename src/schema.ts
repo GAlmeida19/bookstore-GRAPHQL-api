@@ -7,6 +7,7 @@ import {
   UserResolver,
 } from './resolvers';
 import { AddressResolver } from './resolvers/address.resolver';
+import { RatingResolver } from './resolvers/rating.resolver';
 
 export const createSchema = () =>
   buildSchema({
@@ -17,5 +18,6 @@ export const createSchema = () =>
       UserResolver,
       EmployeeResolver,
       AddressResolver,
+      RatingResolver,
     ],
   });

@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
-import { Author, Book, Buyer, Employee } from '../entities';
-import { Address } from '../entities/address.entity';
+import { Address, Author, Book, Buyer, Employee, Rating } from '../entities';
 import { User } from '../entities/user.entity';
 
 dotenv.config();
@@ -14,9 +13,9 @@ export const AppDataSource = new DataSource({
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Book, Author, Buyer, User, Employee, Address],
+  entities: [Book, Author, Buyer, User, Employee, Address, Rating],
   synchronize: true,
-  // logging: true,
+  logging: true,
 });
 
 export async function initializeDataSource(): Promise<void> {

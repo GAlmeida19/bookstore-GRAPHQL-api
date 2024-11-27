@@ -5,15 +5,18 @@ import { Buyer } from '../entities/buyer.entity';
 import { User } from '../entities/user.entity';
 import { userRole } from '../enums/book.enum';
 import { BookService } from './book.service';
+import { UserService } from './user.service';
 
 export class BuyerService {
   private buyerRepository = AppDataSource.getRepository(Buyer);
   private addressRepository = AppDataSource.getRepository(Address);
   private userRepository = AppDataSource.getRepository(User);
-  bookServie: BookService;
+  bookService: BookService;
+  userService: UserService;
 
   constructor() {
-    this.bookServie = new BookService();
+    this.bookService = new BookService();
+    this.userService = new UserService();
   }
 
   /**
@@ -22,7 +25,7 @@ export class BuyerService {
    */
   async findAll(): Promise<Buyer[]> {
     return this.buyerRepository.find({
-      relations: ['books', 'user', 'addresses'],
+      relations: ['wishlist', 'books', 'user', 'addresses'],
     });
   }
 
@@ -34,7 +37,7 @@ export class BuyerService {
   async findById(id: number): Promise<Buyer | null> {
     return this.buyerRepository.findOne({
       where: { id },
-      relations: ['books', 'user', 'addresses'],
+      relations: ['wishlist', 'books', 'user', 'addresses'],
     });
   }
 
@@ -166,11 +169,21 @@ export class BuyerService {
    * @throws {Error} Throws error if the buyer or book is not found, or if stock or funds are insufficient.
    */
   async purchase(buyerid: number, bookid: number): Promise<Buyer | null> {
-    const buyer = await this.findById(buyerid);
+    console.log('aqui1');
+    const user = await this.userService.findById(buyerid);
+    if (!user?.buyer?.id) {
+      throw new Error('User not found');
+    }
+
+    console.log('aqui2');
+    const buyer = await this.findById(user?.buyer?.id);
     if (!buyer) {
       throw new Error('Buyer not found');
     }
-    const book = await this.bookServie.findById(bookid);
+
+    console.log(buyer);
+
+    const book = await this.bookService.findById(bookid);
     if (!book) {
       throw new Error('Book not found');
     }
@@ -189,7 +202,7 @@ export class BuyerService {
     buyer.books.push(book);
 
     await this.buyerRepository.save(buyer);
-    await this.bookServie.update(
+    await this.bookService.update(
       book.id,
       undefined,
       undefined,
@@ -200,6 +213,36 @@ export class BuyerService {
 
     return buyer;
   }
-}
 
-//TODO: be able to reserve a book
+  /**
+   *
+   * @param buyerid
+   * @param bookid
+   * @returns
+   */
+  async addToWishlist(buyerid: number, bookid: number): Promise<Buyer | null> {
+    const user = await this.userService.findById(buyerid);
+    if (!user?.buyer?.id) {
+      throw new Error('User not found');
+    }
+
+    const buyer = await this.findById(user?.buyer?.id);
+    if (!buyer) {
+      throw new Error('Buyer not found');
+    }
+
+    console.log(buyer);
+    const book = await this.bookService.findById(bookid);
+
+    if (!book) {
+      throw new Error('Book not found');
+    }
+    buyer.wishlist.push(book);
+
+    await this.buyerRepository.save(buyer);
+
+    return buyer;
+  }
+
+  //TODO: find a new way to deal with errors
+}

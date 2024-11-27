@@ -58,6 +58,7 @@ export class BookResolver {
     @Arg('stock') stock: number,
     @Arg('price') price: number,
     @Arg('introduction') introduction: string,
+    @Arg('tags', () => [String]) tags: string[],
   ): Promise<Book> {
     return this.bookService.create(
       title,
@@ -67,6 +68,7 @@ export class BookResolver {
       stock,
       price,
       introduction,
+      tags,
     );
   }
 

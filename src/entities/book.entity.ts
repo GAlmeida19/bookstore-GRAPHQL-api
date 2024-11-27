@@ -2,15 +2,14 @@ import { Field, Float, Int, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
-  JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   Unique,
 } from 'typeorm';
 import { categories } from '../enums/book.enum';
-import { Author } from './author.entity';
-import { Buyer } from './buyer.entity';
+import { Author, Buyer, Rating } from './index';
 
 @ObjectType()
 @Entity()
@@ -48,12 +47,23 @@ export class Book {
   @Column('text')
   introduction!: string;
 
+  @Field(() => [String], { nullable: true })
+  @Column('text', { array: true })
+  tags!: string[];
+
   @Field(() => Author)
   @ManyToOne(() => Author, (author) => author.books)
   author!: Author;
 
-  @Field(() => [Buyer])
+  @Field(() => [Buyer], { nullable: true })
   @ManyToMany(() => Buyer, (buyer) => buyer.books)
-  @JoinTable()
   buyers!: Buyer[];
+
+  @Field(() => [Buyer], { nullable: true })
+  @ManyToMany(() => Buyer, (buyer) => buyer.books)
+  favorites!: Buyer[];
+
+  @Field(() => [Rating])
+  @OneToMany(() => Rating, (rating) => rating.book)
+  ratings!: Rating[];
 }

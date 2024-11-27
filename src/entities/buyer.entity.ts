@@ -3,6 +3,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToMany,
   OneToMany,
   OneToOne,
@@ -44,13 +45,19 @@ export class Buyer {
   @Column({ type: 'float' })
   wallet!: number;
 
-  @OneToOne(() => User, (user) => user.employee, { cascade: true, eager: true }) // Owner side
-  @JoinColumn() // Adds a foreign key in Employee table
+  @OneToOne(() => User, (user) => user.employee, { cascade: true, eager: true })
+  @JoinColumn()
   user!: User;
 
-  @Field(() => [Book])
+  @Field(() => [Book], { nullable: true })
   @ManyToMany(() => Book, (book) => book.buyers)
+  @JoinTable({ name: 'buyer_purchased_books' })
   books!: Book[];
+
+  @Field(() => [Book], { nullable: true })
+  @ManyToMany(() => Book, (book) => book.favorites)
+  @JoinTable({ name: 'buyer_wishlist' })
+  wishlist!: Book[];
 
   @Field(() => [Address])
   @OneToMany(() => Address, (address) => address.buyer)
