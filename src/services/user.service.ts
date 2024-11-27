@@ -28,4 +28,16 @@ export class UserService {
     res.clearCookie('token', { httpOnly: true });
     return 'Successfully logged out';
   }
+
+  /**
+   * Retrieves a user by their ID, including their associated books.
+   * @param {number} id - The ID of the user to find.
+   * @returns {Promise<User | null>} The user if found, or null if not found.
+   */
+  async findById(id: number): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: { id },
+      relations: ['buyer', 'employee', 'ratings'],
+    });
+  }
 }

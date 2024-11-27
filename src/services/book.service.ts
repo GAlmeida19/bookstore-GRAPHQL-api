@@ -13,7 +13,9 @@ export class BookService {
    * @returns A list of all books, each with its associated author.
    */
   async findAll(): Promise<Book[]> {
-    return this.bookRepository.find({ relations: ['author', 'buyers'] });
+    return this.bookRepository.find({
+      relations: ['favorites', 'author', 'buyers', 'ratings'],
+    });
   }
 
   /**
@@ -24,7 +26,7 @@ export class BookService {
   async findById(id: number): Promise<Book | null> {
     return this.bookRepository.findOne({
       where: { id },
-      relations: ['author', 'buyers'],
+      relations: ['favorites', 'author', 'buyers', 'ratings'],
     });
   }
 
@@ -36,7 +38,7 @@ export class BookService {
   async findByTitle(title: string): Promise<Book | null> {
     return this.bookRepository.findOne({
       where: { title },
-      relations: ['author', 'buyers'],
+      relations: ['author', 'buyers', 'ratings', 'favorites'],
     });
   }
 
@@ -59,6 +61,7 @@ export class BookService {
     stock: number,
     price: number,
     introduction: string,
+    tags: string[],
   ): Promise<Book> {
     const author = await this.authorRepository.findOne({
       where: { id: authorId },
@@ -76,6 +79,7 @@ export class BookService {
       stock,
       price,
       introduction,
+      tags,
     });
 
     return this.bookRepository.save(newBook);
@@ -173,3 +177,5 @@ export class BookService {
     return top3SimilarBooks;
   }
 }
+
+//TODO: update similar books with tags

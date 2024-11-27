@@ -12,6 +12,13 @@ export class UserResolver {
     this.userService = new UserService();
   }
 
+  /**
+   * Mutation to log in a user and generate an authentication token.
+   * @param {string} emailAddress The email address of the user attempting to log in.
+   * @param {string} password The password associated with the user's account.
+   * @returns {Promise<string>} A JWT authentication token if the login is successful.
+   * @throws {Error} If the email address or password is incorrect, or if the user does not exist.
+   */
   @Mutation(() => String)
   async login(
     @Arg('emailAddress') emailAddress: string,

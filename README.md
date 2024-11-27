@@ -2,14 +2,21 @@
 
 ## Overview
 
-This project is a fully functional Bookstore API built with GraphQL, providing comprehensive CRUD functionality. It simulates a real-world bookstore, managing books, authors, buyers, and the relationships between them. Currently, the API includes three main entities:
+This project is a fully functional **Bookstore API** built with GraphQL, providing comprehensive CRUD functionality. It simulates a real-world bookstore, managing books, authors, buyers, and the relationships between them. Additionally, the API now includes advanced features such as login/logout, ratings, wishlists, and multiple addresses management.
+
+### Main Entities
 
 - **Book**
 - **Author**
 - **Buyer**
 - **Employee**
+- **Address**
+- **User**
+- **Rating**
 
-Note: This project is still under active development, so additional features and enhancements are in progress.
+> **Note**: This project is still under active development, with additional features and enhancements in progress.
+
+---
 
 ## Getting Started
 
@@ -26,6 +33,7 @@ Note: This project is still under active development, so additional features and
    ```bash
    git clone <repository-url>
    cd <project-folder>
+
    ```
 
 2. **Install dependencies**:
@@ -63,22 +71,60 @@ Access the GraphQL Playground at `http://localhost:4000/graphql` to explore and 
 ## Features
 
 - **CRUD Operations**:
-  - Full Create, Read, Update, and Delete functionalities for books, authors, and buyers.
+  - Full Create, Read, Update, and Delete functionalities for books, authors, buyers, users, addresses, and ratings.
+- **Login/Logout**:
+  - Users can now log in and log out of their accounts.
+- **Permission-Based Access**:
+  - Certain functions require specific permissions, ensuring secure and appropriate access.
+- **Ratings and Reviews**:
+  - Users can rate and add reviews to books.
+- **Wishlists**:
+  - Add books to a personal wishlist for future reference.
+- **Address Management**:
+  - Users can manage multiple addresses associated with their accounts and set a default address.
 - **Relationship Management**:
-  - Supports the relationships between books, authors, and buyers, allowing for more dynamic queries and mutations.
+  - Supports relationships between books, authors, and buyers, allowing for dynamic queries and mutations.
 
 ## Entities
 
-1. **Book**
-2. **Author**
-3. **Buyer**
-4. **Employee**
+### Book
+
+Represents a book available in the bookstore, including fields for title, genre, price, stock, and associated author(s).
+
+### Author
+
+Represents an author who has written books in the bookstore. Includes details such as name, biography, and associated books.
+
+### Buyer
+
+Represents a buyer who can purchase books, create wishlists, manage addresses, and leave ratings and reviews.
+
+### Employee
+
+Represents an employee of the bookstore, with possible administrative privileges for managing the system.
+
+### Address
+
+Represents an address associated with a buyer. Buyers can have multiple addresses and designate a default one for purchases.
+
+### User
+
+Represents a general user of the system, handling login credentials and authentication. Can be a buyer or an employee.
+
+### Rating
+
+Represents a rating and optional review left by a buyer for a book. Includes fields for the rating value, review content, and the associated user and book.
 
 ## Future Enhancements
 
-- Additional features and entities.
-- Improved search and filtering capabilities.
-- Enhanced validation and security.
+- **AI-Powered Recommendations**:
+  - Personalized book recommendations for buyers, powered by AI.
+- **Frontend Development**:
+  - A simple and user-friendly frontend to interact with the API.
+- **Enhanced Security**:
+  - Improved security measures to safeguard user data and accounts.
+- **Improved Search and Filtering**:
+  - Advanced capabilities for searching and filtering books, authors, and reviews.
 
 ## Development Status
 

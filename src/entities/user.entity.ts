@@ -2,6 +2,7 @@ import { Field, ObjectType } from 'type-graphql';
 import {
   Column,
   Entity,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
   Unique,
@@ -9,6 +10,7 @@ import {
 import { userRole } from '../enums/book.enum';
 import { Buyer } from './buyer.entity';
 import { Employee } from './employee.entity';
+import { Rating } from './rating.entity';
 
 @ObjectType()
 @Entity()
@@ -22,6 +24,7 @@ export class User {
   @Column()
   emailAddress!: string;
 
+  @Field()
   @Column()
   password!: string;
 
@@ -38,4 +41,8 @@ export class User {
 
   @OneToOne(() => Employee, (employee) => employee.user)
   employee?: Employee;
+
+  @Field(() => [Rating])
+  @OneToMany(() => Rating, (rating) => rating.user)
+  ratings!: Rating[];
 }
